@@ -54,32 +54,32 @@ def normalize_pc(pc: np.ndarray, means: np.ndarray, max_distance: float):
     return (pc - means) / max_distance
 
 
-def main():
+def render_pc(files, colors, sizes, squeeze, normalize):
     """
     Read pcs from files, apply argument options and
     :return:
     """
-
-    args = get_args()
+    
     pc_list: List[np.ndarray] = []
 
-    if args.file:
-        pc_list += [read_pc([i]) for i in args.file]
+    if files:
+        pc_list += [read_pc([i]) for i in files]
 
     pc_list = [item for sublist in pc_list for item in sublist]
 
-    if args.squeeze:
+    if squeeze:
         pc_list = [pc.squeeze(0) for pc in pc_list]
 
-    if args.normalize:
+    if normalize:
         reference = pc_list[0]
         means = reference.mean(axis=0, keepdims=True)
         distance = np.sqrt(np.power(reference, 2).sum(axis=1))
         max_distance = np.max(distance)
         pc_list = [normalize_pc(pc, means, max_distance) for pc in pc_list]
 
-    visualize_pc(pc_list, args.color, args.size, )
+    visualize_pc(pc_list, colors, sizes)
 
 
 if __name__ == '__main__':
-    main()
+    args = get_args()
+    main(args.file, args.color, args.size, args.squeeze, args.normalize)
