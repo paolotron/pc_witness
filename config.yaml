@@ -1,0 +1,11 @@
+ssh:
+  server: ???
+  port: ???
+  user: ???
+
+files:
+  remote_root: /path/to/remote/folder
+  local_root: /path/to/local/folder
+  elements:
+    - file1.npy
+    - fil2.npy
