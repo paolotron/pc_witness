@@ -1,0 +1,6 @@
+matplotlib==3.5.2
+numpy==1.22.3
+paramiko==2.11.0
+pptk==0.1.0
+PyYAML==6.0
+scp==0.14.4

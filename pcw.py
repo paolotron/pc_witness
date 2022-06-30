@@ -16,10 +16,10 @@ def visualize_pc(pcs: Tuple[np.ndarray], colors: Tuple[str] = None, size: float 
     :param size: size of the points
     :return: None
     """
-
+     
     if not colors:
         colors = _default_colors
-
+    
     np_colors = [mcolors.to_rgba(c) for c in colors]
 
     pc = np.vstack(pcs)
@@ -82,4 +82,4 @@ def render_pc(files, colors, sizes, squeeze, normalize):
 
 if __name__ == '__main__':
     args = get_args()
-    main(args.file, args.color, args.size, args.squeeze, args.normalize)
+    render_pc(args.file, args.color, args.size, args.squeeze, args.normalize)
