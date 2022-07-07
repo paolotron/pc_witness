@@ -1,13 +1,14 @@
 from typing import List, Tuple
 from matplotlib import colors as mcolors
-import argparse
+import yaml
 import numpy as np
 import pptk
+import sys
 
 _default_colors = ('y', 'magenta', 'g', 'r', 'b')
 
 
-def visualize_pc(pcs: Tuple[np.ndarray], colors: Tuple[str] = None, size: float = 0.0005):
+def visualize_pc(pcs: Tuple[np.ndarray], colors: Tuple[str] = (), size: float = 0.0005):
     """
     Visualize pointclouds with pptk viewer
     :param pcs: Collection of pointcloutds in the form [N x 3]
@@ -16,10 +17,9 @@ def visualize_pc(pcs: Tuple[np.ndarray], colors: Tuple[str] = None, size: float 
     :param size: size of the points
     :return: None
     """
-     
     if not colors:
         colors = _default_colors
-    
+
     np_colors = [mcolors.to_rgba(c) for c in colors]
 
     pc = np.vstack(pcs)
@@ -31,19 +31,10 @@ def visualize_pc(pcs: Tuple[np.ndarray], colors: Tuple[str] = None, size: float 
     view.set(point_size=size)
 
 
-def get_args():
-    """
-    Parse arguments
-    :return: Namspace with passed arguments
-    """
-
-    parser = argparse.ArgumentParser(description='Visualize pointcloud')
-    parser.add_argument('--file', '-f', type=str, nargs='+')
-    parser.add_argument('--color', '-c', '--colour', type=str, nargs='+')
-    parser.add_argument('--size', '-s', default=0.0005, type=float)
-    parser.add_argument('--squeeze', '-z', action='store_true', default=False)
-    parser.add_argument('--normalize', '-n', action='store_true', default=False)
-    return parser.parse_args()
+def get_yaml_args(config):
+    with open(config, 'r') as stream:
+        cfg = yaml.safe_load(stream)
+        return cfg
 
 
 def read_pc(files):
@@ -54,12 +45,16 @@ def normalize_pc(pc: np.ndarray, means: np.ndarray, max_distance: float):
     return (pc - means) / max_distance
 
 
-def render_pc(files, colors, sizes, squeeze, normalize):
+def render_pc(files: List[str],
+              colors: List[str],
+              sizes: float,
+              squeeze: bool,
+              normalize: bool):
     """
     Read pcs from files, apply argument options and
     :return:
     """
-    
+
     pc_list: List[np.ndarray] = []
 
     if files:
@@ -81,5 +76,6 @@ def render_pc(files, colors, sizes, squeeze, normalize):
 
 
 if __name__ == '__main__':
-    args = get_args()
-    render_pc(args.file, args.color, args.size, args.squeeze, args.normalize)
+    config_file = sys.argv[1]
+    cfg = get_yaml_args(config_file)
+    render_pc(**cfg)
